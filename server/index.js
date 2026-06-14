@@ -13,6 +13,9 @@ import {
   getBadges,
   getEntriesForDate,
   getActivityFeed,
+  getCategoryBreakdown,
+  getTodayStatus,
+  getLastEntry,
 } from './stats.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -103,8 +106,50 @@ app.post('/api/entries', (req, res) => {
   res.status(201).json(entry);
 });
 
+app.put('/api/entries/:id', (req, res) => {
+  const existing = db.prepare('SELECT * FROM entries WHERE id = ?').get(req.params.id);
+  if (!existing) return res.status(404).json({ error: 'Entry not found' });
+
+  const {
+    date = existing.date,
+    category = existing.category,
+    title = existing.title,
+    notes = existing.notes,
+    time_spent_minutes = existing.time_spent_minutes,
+    platform = existing.platform,
+    difficulty = existing.difficulty,
+    problem_link = existing.problem_link,
+    reference_link = existing.reference_link,
+  } = req.body;
+
+  db.prepare(
+    `UPDATE entries SET date=?, category=?, title=?, notes=?, time_spent_minutes=?,
+     platform=?, difficulty=?, problem_link=?, reference_link=? WHERE id=?`
+  ).run(
+    date,
+    category,
+    title,
+    notes,
+    time_spent_minutes,
+    platform || null,
+    difficulty || null,
+    problem_link || null,
+    reference_link || null,
+    req.params.id
+  );
+
+  const entry = db
+    .prepare(
+      `SELECT e.*, u.name as user_name FROM entries e
+       JOIN users u ON u.id = e.user_id WHERE e.id = ?`
+    )
+    .get(req.params.id);
+  res.json(entry);
+});
+
 app.delete('/api/entries/:id', (req, res) => {
-  db.prepare('DELETE FROM entries WHERE id = ?').run(req.params.id);
+  const result = db.prepare('DELETE FROM entries WHERE id = ?').run(req.params.id);
+  if (result.changes === 0) return res.status(404).json({ error: 'Entry not found' });
   res.json({ success: true });
 });
 
@@ -161,6 +206,21 @@ app.get('/api/feed', (req, res) => {
 
 app.get('/api/day/:userId/:date', (req, res) => {
   res.json(getEntriesForDate(parseInt(req.params.userId, 10), req.params.date));
+});
+
+app.get('/api/breakdown/:userId', (req, res) => {
+  const year = parseInt(req.query.year || new Date().getFullYear(), 10);
+  const month = parseInt(req.query.month || new Date().getMonth() + 1, 10);
+  res.json(getCategoryBreakdown(parseInt(req.params.userId, 10), year, month));
+});
+
+app.get('/api/today/:userId', (req, res) => {
+  res.json(getTodayStatus(parseInt(req.params.userId, 10)));
+});
+
+app.get('/api/last-entry/:userId', (req, res) => {
+  const entry = getLastEntry(parseInt(req.params.userId, 10));
+  res.json(entry || null);
 });
 
 const clientDist = path.join(__dirname, '..', 'client', 'dist');

@@ -22,6 +22,12 @@ npm run dev
 
 Open [http://localhost:5173](http://localhost:5173)
 
+Run tests separately:
+
+```bash
+npm test --prefix server
+```
+
 ## Production
 
 ```bash
@@ -43,6 +49,20 @@ Serves the built UI from the Express server on port 3001.
 - GitHub-style contribution heatmap
 - Achievement badges (7/15/30-day streaks)
 - PDF monthly report export
+- Edit & delete entries from activity feed and calendar
+- Today banner with streak-at-risk alerts
+- Category & DSA difficulty pie charts
+- Progress ring for monthly goal
+- Time presets (15–120 min) and repeat-last entry
+- Search & filter activity feed
+- Mobile bottom navigation tabs
+- Toast notifications
+
+## Testing
+
+```bash
+npm test --prefix server   # 19 API integration tests
+```
 
 ## API
 
@@ -50,7 +70,11 @@ Serves the built UI from the Express server on port 3001.
 |--------|----------|-------------|
 | GET | `/api/users` | List users |
 | GET/PUT | `/api/settings` | Challenge settings |
-| GET/POST | `/api/entries` | Activity entries |
+| GET/POST | `/api/entries` | List or create entries |
+| GET/PUT/DELETE | `/api/entries/:id` | Update or delete entry |
+| GET | `/api/today/:userId` | Today's logging status |
+| GET | `/api/breakdown/:userId` | Category & difficulty stats |
+| GET | `/api/last-entry/:userId` | Most recent entry (for repeat) |
 | GET | `/api/stats/:userId` | User monthly stats |
 | GET | `/api/leaderboard` | Compare users |
 | GET | `/api/challenge` | Monthly outcome |

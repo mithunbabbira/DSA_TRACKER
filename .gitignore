@@ -1,4 +1,10 @@
 node_modules/
+server/test-tracker.db
+server/test-tracker.db-wal
+server/test-tracker.db-shm
+server/test/*.db
+server/test/*.db-wal
+server/test/*.db-shm
 server/tracker.db
 server/tracker.db-wal
 server/tracker.db-shm

@@ -1,40 +1,42 @@
+import { Card } from './ui';
+
 export default function Leaderboard({ data }) {
   if (!data?.leaderboard) return null;
 
   const { leaderboard, leader } = data;
 
   const rows = [
-    { key: 'productiveDays', label: 'Productive Days' },
-    { key: 'totalHours', label: 'Study Hours' },
-    { key: 'currentStreak', label: 'Current Streak' },
-    { key: 'longestStreak', label: 'Longest Streak' },
-    { key: 'dsaCount', label: 'DSA Count' },
-    { key: 'lldCount', label: 'LLD Count' },
-    { key: 'hldCount', label: 'HLD Count' },
+    { key: 'productiveDays', label: 'Productive Days', icon: '📅' },
+    { key: 'totalHours', label: 'Study Hours', icon: '⏱' },
+    { key: 'currentStreak', label: 'Current Streak', icon: '🔥' },
+    { key: 'longestStreak', label: 'Longest Streak', icon: '🏆' },
+    { key: 'dsaCount', label: 'DSA', icon: '💻' },
+    { key: 'lldCount', label: 'LLD', icon: '🏗' },
+    { key: 'hldCount', label: 'HLD', icon: '🌐' },
   ];
 
   return (
-    <div className="rounded-xl border border-[var(--color-border)] bg-[var(--color-surface-2)] p-4">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-400">
-          Leaderboard
-        </h2>
-        {leader && (
-          <span className="rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-medium text-emerald-400">
-            {leader} is leading
+    <Card
+      title="Leaderboard"
+      action={
+        leader && (
+          <span className="rounded-full bg-gradient-to-r from-amber-100 to-yellow-100 px-3 py-1 text-xs font-semibold text-amber-700">
+            👑 {leader} leads
           </span>
-        )}
-      </div>
-
+        )
+      }
+    >
       <div className="overflow-x-auto">
         <table className="w-full text-sm">
           <thead>
-            <tr className="border-b border-[var(--color-border)] text-left text-slate-500">
-              <th className="pb-2 pr-4 font-medium">Metric</th>
+            <tr className="border-b border-slate-100 text-left">
+              <th className="pb-3 pr-4 text-xs font-medium uppercase tracking-wider text-slate-400">Metric</th>
               {leaderboard.map((u) => (
                 <th
                   key={u.name}
-                  className={`pb-2 px-4 font-medium ${u.name === leader ? 'text-emerald-400' : ''}`}
+                  className={`pb-3 px-4 text-sm font-semibold ${
+                    u.name === leader ? 'text-emerald-600' : 'text-slate-700'
+                  }`}
                 >
                   {u.name}
                   {u.name === leader && ' 👑'}
@@ -43,17 +45,22 @@ export default function Leaderboard({ data }) {
             </tr>
           </thead>
           <tbody>
-            {rows.map(({ key, label }) => {
+            {rows.map(({ key, label, icon }) => {
               const values = leaderboard.map((u) => u[key]);
               const max = Math.max(...values);
               return (
-                <tr key={key} className="border-b border-[var(--color-border)]/50">
-                  <td className="py-2.5 pr-4 text-slate-400">{label}</td>
+                <tr key={key} className="border-b border-slate-50 hover:bg-slate-50/80">
+                  <td className="py-3 pr-4 text-slate-500">
+                    <span className="mr-1.5">{icon}</span>
+                    {label}
+                  </td>
                   {leaderboard.map((u) => (
                     <td
                       key={u.name}
-                      className={`py-2.5 px-4 font-mono ${
-                        u[key] === max && max > 0 ? 'font-semibold text-emerald-400' : ''
+                      className={`py-3 px-4 font-mono ${
+                        u[key] === max && max > 0
+                          ? 'rounded-lg bg-emerald-50 font-bold text-emerald-700'
+                          : 'text-slate-700'
                       }`}
                     >
                       {u[key]}
@@ -65,6 +72,6 @@ export default function Leaderboard({ data }) {
           </tbody>
         </table>
       </div>
-    </div>
+    </Card>
   );
 }

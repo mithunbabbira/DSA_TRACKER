@@ -49,13 +49,28 @@ export async function fetchBadges(userId) {
   return res.json();
 }
 
-export async function fetchFeed(limit = 30) {
+export async function fetchFeed(limit = 50) {
   const res = await fetch(`${API}/feed?limit=${limit}`);
   return res.json();
 }
 
 export async function fetchDayEntries(userId, date) {
   const res = await fetch(`${API}/day/${userId}/${date}`);
+  return res.json();
+}
+
+export async function fetchBreakdown(userId, year, month) {
+  const res = await fetch(`${API}/breakdown/${userId}?year=${year}&month=${month}`);
+  return res.json();
+}
+
+export async function fetchTodayStatus(userId) {
+  const res = await fetch(`${API}/today/${userId}`);
+  return res.json();
+}
+
+export async function fetchLastEntry(userId) {
+  const res = await fetch(`${API}/last-entry/${userId}`);
   return res.json();
 }
 
@@ -69,8 +84,19 @@ export async function createEntry(entry) {
   return res.json();
 }
 
+export async function updateEntry(id, entry) {
+  const res = await fetch(`${API}/entries/${id}`, {
+    method: 'PUT',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(entry),
+  });
+  if (!res.ok) throw new Error('Failed to update entry');
+  return res.json();
+}
+
 export async function deleteEntry(id) {
-  await fetch(`${API}/entries/${id}`, { method: 'DELETE' });
+  const res = await fetch(`${API}/entries/${id}`, { method: 'DELETE' });
+  if (!res.ok) throw new Error('Failed to delete entry');
 }
 
 export function todayStr() {
@@ -83,8 +109,9 @@ export const MONTHS = [
   'July', 'August', 'September', 'October', 'November', 'December',
 ];
 
-export const CATEGORY_COLORS = {
-  DSA: 'text-emerald-400 bg-emerald-400/10 border-emerald-400/30',
-  LLD: 'text-blue-400 bg-blue-400/10 border-blue-400/30',
-  HLD: 'text-purple-400 bg-purple-400/10 border-purple-400/30',
+export const USER_COLORS = {
+  Mithun: 'bg-blue-100 text-blue-700 border-blue-200',
+  Devesh: 'bg-orange-100 text-orange-700 border-orange-200',
 };
+
+export const TIME_PRESETS = [15, 30, 45, 60, 90, 120];

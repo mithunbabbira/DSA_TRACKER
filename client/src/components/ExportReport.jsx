@@ -2,19 +2,12 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import { MONTHS } from '../api';
 
-export function exportMonthlyReport({
-  userName,
-  year,
-  month,
-  stats,
-  settings,
-  challenge,
-  feed,
-}) {
+export function exportMonthlyReport({ userName, year, month, stats, settings, challenge, feed }) {
   const doc = new jsPDF();
   const monthName = MONTHS[month - 1];
 
   doc.setFontSize(18);
+  doc.setTextColor(5, 150, 105);
   doc.text('Monthly Prep Report', 14, 20);
   doc.setFontSize(11);
   doc.setTextColor(100);
@@ -36,10 +29,10 @@ export function exportMonthlyReport({
       ['LLD Sessions', `${stats.lldCount}`],
       ['HLD Sessions', `${stats.hldCount}`],
       ['Target Progress', `${stats.targetProgress}%`],
-      ['Status', stats.passed ? 'PASS' : 'FAIL'],
+      ['Status', stats.passed ? 'PASS' : 'BEHIND'],
     ],
     theme: 'grid',
-    headStyles: { fillColor: [34, 197, 94] },
+    headStyles: { fillColor: [5, 150, 105] },
   });
 
   const challengeY = doc.lastAutoTable.finalY + 12;
@@ -57,7 +50,7 @@ export function exportMonthlyReport({
     head: [['Date', 'Category', 'Title', 'Minutes']],
     body: userFeed.map((e) => [e.date, e.category, e.title, e.time_spent_minutes]),
     theme: 'striped',
-    headStyles: { fillColor: [34, 197, 94] },
+    headStyles: { fillColor: [5, 150, 105] },
   });
 
   doc.save(`${userName}-${monthName}-${year}-report.pdf`);
@@ -68,9 +61,9 @@ export default function ExportButton({ onExport }) {
     <button
       type="button"
       onClick={onExport}
-      className="rounded-lg border border-[var(--color-border)] bg-[var(--color-surface-3)] px-3 py-1.5 text-xs font-medium text-slate-300 hover:bg-[var(--color-border)]"
+      className="rounded-xl border border-slate-200 bg-white px-3 py-2 text-xs font-semibold text-slate-600 shadow-sm hover:bg-slate-50"
     >
-      Export PDF
+      📄 Export PDF
     </button>
   );
 }

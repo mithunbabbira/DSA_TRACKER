@@ -3,23 +3,51 @@
 @theme {
   --font-sans: "Outfit", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", monospace;
-  --color-surface: #0f1117;
-  --color-surface-2: #161922;
-  --color-surface-3: #1e2230;
-  --color-border: #2a3042;
-  --color-accent: #22c55e;
-  --color-accent-dim: #16a34a;
-  --color-danger: #ef4444;
-  --color-warning: #f59e0b;
-  --color-muted: #94a3b8;
+  --color-surface: #f0f4ff;
+  --color-surface-2: #ffffff;
+  --color-surface-3: #f8fafc;
+  --color-border: #e2e8f0;
+  --color-accent: #059669;
+  --color-accent-light: #d1fae5;
+  --color-accent-blue: #2563eb;
+  --color-accent-purple: #7c3aed;
+  --color-danger: #dc2626;
+  --color-danger-light: #fee2e2;
+  --color-warning: #d97706;
+  --color-warning-light: #fef3c7;
 }
 
 body {
-  @apply bg-[var(--color-surface)] text-slate-100 font-sans antialiased;
+  @apply bg-[var(--color-surface)] text-slate-800 font-sans antialiased;
   min-height: 100dvh;
+  background-image:
+    radial-gradient(ellipse at 0% 0%, rgba(37, 99, 235, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 100% 0%, rgba(5, 150, 105, 0.08) 0%, transparent 50%);
 }
 
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-border) transparent;
+  scrollbar-color: #cbd5e1 transparent;
+}
+
+input, select, textarea {
+  color-scheme: light;
+}
+
+@keyframes slide-in {
+  from { transform: translateY(-8px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-slide-in {
+  animation: slide-in 0.25s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.2s ease-out;
 }

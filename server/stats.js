@@ -387,3 +387,56 @@ export function getActivityFeed(limit = 50) {
     )
     .all(limit);
 }
+
+export function getCategoryBreakdown(userId, year, month) {
+  const prefix = `${year}-${String(month).padStart(2, '0')}`;
+  const categories = db
+    .prepare(
+      `SELECT category, COUNT(*) as count, SUM(time_spent_minutes) as minutes
+       FROM entries WHERE user_id = ? AND date LIKE ? || '%'
+       GROUP BY category`
+    )
+    .all(userId, prefix);
+
+  const difficulties = db
+    .prepare(
+      `SELECT difficulty, COUNT(*) as count FROM entries
+       WHERE user_id = ? AND date LIKE ? || '%' AND category = 'DSA' AND difficulty IS NOT NULL
+       GROUP BY difficulty`
+    )
+    .all(userId, prefix);
+
+  return { categories, difficulties };
+}
+
+export function getTodayStatus(userId) {
+  const today = new Date();
+  const todayStr = formatDate(today.getFullYear(), today.getMonth() + 1, today.getDate());
+  const count = db
+    .prepare('SELECT COUNT(*) as count FROM entries WHERE user_id = ? AND date = ?')
+    .get(userId, todayStr);
+  const minutes = db
+    .prepare(
+      'SELECT COALESCE(SUM(time_spent_minutes), 0) as total FROM entries WHERE user_id = ? AND date = ?'
+    )
+    .get(userId, todayStr);
+  const { currentStreak } = computeGlobalStreaks(userId);
+
+  return {
+    date: todayStr,
+    loggedToday: count.count > 0,
+    entryCount: count.count,
+    minutesToday: minutes.total,
+    currentStreak,
+  };
+}
+
+export function getLastEntry(userId) {
+  return db
+    .prepare(
+      `SELECT e.*, u.name as user_name FROM entries e
+       JOIN users u ON u.id = e.user_id
+       WHERE e.user_id = ? ORDER BY e.created_at DESC LIMIT 1`
+    )
+    .get(userId);
+}
