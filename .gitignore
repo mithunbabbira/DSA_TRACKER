@@ -1,0 +1,7 @@
+node_modules/
+server/tracker.db
+server/tracker.db-wal
+server/tracker.db-shm
+dist/
+client/dist/
+.DS_Store
